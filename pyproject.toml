@@ -1,7 +1,7 @@
 [project]
-name = "Artix_tickets_analizer"
+name = "NLP_based_data_processing_prototype"
 version = "0.0.1"
-description = "Artix tickets analizer"
+description = "NLP-based data processing prototype"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
