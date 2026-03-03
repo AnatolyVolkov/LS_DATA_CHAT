@@ -12,8 +12,14 @@ from database.connection import db_connection
 from agents.sql_agent import SQLAgent
 from config import Config
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/main.log", encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
 
 # Initialize session state
 if 'agent' not in st.session_state:
@@ -31,7 +37,7 @@ def init_connection():
         if db_connection.connect():
             st.session_state.connected = True
             st.success("✅ Подключено к базе данных")
-            logger.info("Database connection established")
+            logging.info("Database connection established")
         else:
             st.error("❌ Не удалось подключиться к базе данных")
             st.session_state.connected = False
@@ -182,7 +188,7 @@ def main():
                 st.session_state.connected = False
                 st.rerun()
         
-        st.divider()
+        #st.divider()
         
         # st.header("📊 Быстрые запросы")
         # quick_queries = {

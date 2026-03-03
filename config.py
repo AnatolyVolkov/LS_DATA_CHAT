@@ -26,4 +26,4 @@ class Config:
     
     # App Configuration
     MAX_RETRIES = 3
-    CONNECTION_TIMEOUT = 30
+    CONNECTION_TIMEOUT = 300

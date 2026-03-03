@@ -11,8 +11,14 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from config import Config
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/main.log", encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
 
 class DatabaseConnection:
     """Manage SSH tunnel and database connection"""
@@ -38,21 +44,22 @@ class DatabaseConnection:
             self.local_port = self.tunnel.local_bind_port
             
             # Create SQLAlchemy engine
-            connection_string = f"mysql+pymysql://{Config.DB_USER}:{Config.DB_PASSWORD}@localhost:{self.local_port}/{Config.DB_NAME}"
+            connection_string = f"mysql+pymysql://{Config.DB_USER}@localhost:{self.local_port}/{Config.DB_NAME}"            
             self.engine = create_engine(
                 connection_string,
                 poolclass=NullPool,
                 connect_args={
                     'connect_timeout': Config.CONNECTION_TIMEOUT,
+                    'password':Config.DB_PASSWORD,
                     'charset': 'utf8mb4'
                 }
             )
             
-            logger.info(f"Database connection established via local port {self.local_port}")
+            logging.info(f"Database connection established via local port {self.local_port}")
             return True
             
         except Exception as e:
-            logger.error(f"Failed to establish connection: {e}")
+            logging.error(f"Failed to establish connection: {e}")
             self.disconnect()
             return False
     
@@ -62,7 +69,7 @@ class DatabaseConnection:
             self.engine.dispose()
         if self.tunnel:
             self.tunnel.stop()
-        logger.info("Connections closed")
+        logging.info("Connections closed")
     
     @contextmanager
     def get_connection(self):
@@ -70,7 +77,8 @@ class DatabaseConnection:
         if not self.engine:
             raise Exception("Not connected to database")
         
-        connection = self.engine.connect()
+        
+        connection = self.engine.connect()        
         try:
             yield connection
         finally:
@@ -85,7 +93,7 @@ class DatabaseConnection:
         if not query.strip().upper().startswith('SELECT'):
             raise ValueError("Only SELECT queries are allowed")
         
-        with self.get_connection() as conn:
+        with self.get_connection() as conn:            
             result = conn.execute(text(query), params or {})
             return result.fetchall()
 

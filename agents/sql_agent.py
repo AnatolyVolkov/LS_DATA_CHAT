@@ -9,7 +9,14 @@ from database.connection import db_connection
 from database.schema import get_schema_text
 from llm.deepseek import DeepSeekLLM
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/main.log", encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
 
 class AgentState(TypedDict):
     """State for the SQL agent"""
@@ -70,7 +77,7 @@ class SQLAgent:
             state = await self._generate_response(state)
             
         except Exception as e:
-            logger.error(f"Error processing query: {e}")
+            logging.error(f"Error processing query: {e}")
             state["error"] = str(e)
         
         return self._format_response(state)
@@ -107,7 +114,7 @@ class SQLAgent:
             context = json.loads(response)
             state['context'] = context
         except Exception as e:
-            logger.error(f"Error understanding query: {e}")
+            logging.error(f"Error understanding query: {e}")
             state['error'] = "Не удалось понять запрос"
         
         return state
@@ -144,9 +151,9 @@ class SQLAgent:
                 raise ValueError("Generated query is not SELECT")
             
             state['sql_query'] = sql_query
-            logger.info(f"Generated SQL: {sql_query}")
+            logging.info(f"Generated SQL: {sql_query}")
         except Exception as e:
-            logger.error(f"Error generating SQL: {e}")
+            logging.error(f"Error generating SQL: {e}")
             state['error'] = "Не удалось сгенерировать SQL запрос"
         
         return state
@@ -171,6 +178,7 @@ class SQLAgent:
         """Execute the SQL query"""
         try:
             sql = state['sql_query']
+            logging.info(f"Begin query execution. SQL: {sql}")
             result = db_connection.execute_query(sql)
             
             # Convert to list of dicts
@@ -190,10 +198,10 @@ class SQLAgent:
                             query_result.append(dict(row))
             
             state['query_result'] = query_result
-            logger.info(f"Query executed, returned {len(query_result)} rows")
+            logging.info(f"Query executed, returned {len(query_result)} rows")
             
         except Exception as e:
-            logger.error(f"Error executing query: {e}")
+            logging.error(f"Error executing query: {e}")
             state['error'] = f"Ошибка выполнения запроса: {str(e)}"
         
         return state
@@ -242,7 +250,7 @@ class SQLAgent:
                 state['visualization_data'] = self._prepare_visualization(df)
                 
         except Exception as e:
-            logger.error(f"Error analyzing results: {e}")
+            logging.error(f"Error analyzing results: {e}")
             state['analysis'] = {"row_count": len(results), "error": str(e)}
         
         return state
@@ -295,7 +303,7 @@ class SQLAgent:
         try:
             response = await self.llm.ainvoke(prompt)
         except Exception as e:
-            logger.error(f"Error generating response: {e}")
+            logging.error(f"Error generating response: {e}")
             response = "Извините, не удалось сформировать ответ"
         
         state['messages'].append({

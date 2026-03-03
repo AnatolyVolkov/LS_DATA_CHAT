@@ -7,7 +7,14 @@ import json
 
 from config import Config
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("logs/main.log", encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
 
 class DeepSeekLLM:
     """Wrapper for DeepSeek API using direct HTTP requests"""
@@ -58,11 +65,11 @@ class DeepSeekLLM:
                 result = response.json()
                 return result["choices"][0]["message"]["content"]
             else:
-                logger.error(f"DeepSeek API error: {response.status_code} - {response.text}")
+                logging.error(f"DeepSeek API error: {response.status_code} - {response.text}")
                 raise Exception(f"API error: {response.status_code}")
             
         except Exception as e:
-            logger.error(f"DeepSeek API error: {e}")
+            logging.error(f"DeepSeek API error: {e}")
             raise
     
     async def ainvoke(self, prompt: str, system_message: Optional[str] = None) -> str:
