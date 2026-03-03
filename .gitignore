@@ -1,0 +1,380 @@
+# .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+pythonenv.*
+*.egg
+*.egg-info/
+dist/
+build/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.cache/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+virtualenv/
+*.venv
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+.settings/
+*.sublime-*
+*.code-workspace
+*.vscode/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+*.env
+!.env.example
+
+# Docker
+*.pid
+*.log
+docker-compose.override.yml
+.dockerignore
+docker/data/
+docker/logs/
+*.cid
+.dockerenv
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sql
+!*.sql.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.log.*
+
+# Project specific
+data/
+temp/
+tmp/
+*.tmp
+*.temp
+cache/
+*.cache
+uploads/
+downloads/
+exports/
+*.csv
+!example.csv
+*.xlsx
+!example.xlsx
+
+# SSH Keys
+*.pem
+*.ppk
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa
+id_dsa
+*.priv
+private_key*
+
+# SSL Certificates
+*.crt
+*.csr
+*.pem
+*.cert
+*.key
+cert/
+certs/
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+!streamlit/config.example.toml
+
+# Testing
+test-reports/
+*.cover
+.hypothesis/
+.robotframework/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.bak
+desktop.ini
+$RECYCLE.BIN/
+
+# Docker specific
+.docker/
+docker-compose.override.yml
+*.pid
+docker-compose.dev.yml
+!docker-compose.yml
+
+# Backups
+backup/
+*.backup
+*.bak
+*.old
+*.orig
+
+# Secrets
+secrets/
+secret/
+*.secret
+*.key
+*.cert
+*.pwd
+passwords.txt
+credentials.txt
+
+# Documentation
+site/
+docs/_build/
+docs/build/
+*.pdf
+!*.pdf.example
+
+# Cache files
+.cache/
+*.cache
+*.tmp
+*.temp
+*.pid
+*.lock
+*.lck
+
+# Coverage reports
+coverage/
+*.coverage
+*.coverage.*
+coverage.xml
+*.cover
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+*.tar.gz
+*.zip
+!*.zip.example
+
+# Application specific
+logs/
+data/
+temp_downloads/
+*.session
+*.token
+*.refresh_token
+*.access_token
+
+# VS Code workspace
+*.code-workspace
+.history/
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Vim
+*.swp
+*.swo
+*~
+*.un~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Systemd
+*.service
+!*.service.example
+
+# Config files
+config.local.json
+config.dev.json
+config.prod.json
+!config.example.json
+
+# Secret files
+*.secret.json
+*.secret.yaml
+*.secret.yml
+service-account-key.json
+client-secret.json
+
+# Python wheels
+wheelhouse/
+wheels/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+.pdm-python
+.pdm-build/
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# profile data
+.prof
+.cprof
+
+# C extensions
+*.so
+
+# pyright
+pyrightconfig.json

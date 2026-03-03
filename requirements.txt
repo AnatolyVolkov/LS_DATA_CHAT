@@ -1,0 +1,16 @@
+# requirements.txt
+
+langgraph==0.1.1
+langchain==0.2.16
+langchain-openai==0.1.10
+langchain-community==0.2.10
+streamlit==1.35.0
+pandas==2.2.0
+sqlalchemy==2.0.30
+pymysql==1.1.0
+paramiko==3.4.0
+sshtunnel==0.4.0
+python-dotenv==1.0.1
+cryptography==42.0.8
+plotly==5.22.0
+tenacity==8.2.3

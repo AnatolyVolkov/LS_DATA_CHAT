@@ -1,0 +1,29 @@
+# docker-compose.yml
+services:
+  license-bot:
+    build: .
+    container_name: license-analytics-bot
+    ports:
+      - "8501:8501"
+    environment:
+      - SSH_HOST=${SSH_HOST}
+      - SSH_PORT=${SSH_PORT}
+      - SSH_USERNAME=${SSH_USERNAME}
+      - SSH_PASSWORD=${SSH_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - DEEPSEEK_API_BASE=${DEEPSEEK_API_BASE}
+      - DEEPSEEK_MODEL=${DEEPSEEK_MODEL}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - license-network
+
+networks:
+  license-network:
+    driver: bridge
