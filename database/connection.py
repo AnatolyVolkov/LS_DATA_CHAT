@@ -67,8 +67,8 @@ class DatabaseConnection:
         """Close connections"""
         if self.engine:
             self.engine.dispose()
-        if self.tunnel:
-            self.tunnel.stop()
+        # if self.tunnel:
+        #     self.tunnel.stop()
         logging.info("Connections closed")
     
     @contextmanager

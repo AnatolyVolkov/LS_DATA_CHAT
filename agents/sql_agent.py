@@ -36,7 +36,7 @@ class SQLAgent:
         self.llm = DeepSeekLLM()
         self.schema = get_schema_text()
     
-    async def process_query(self, user_query: str) -> Dict:
+    async def process_query(self, user_query: str, readySQL: str="", readySQLQuery:str="") -> Dict:
         """Process user query through the agent workflow"""
         state = {
             "messages": [{"role": "user", "content": user_query}],
@@ -50,31 +50,42 @@ class SQLAgent:
         }
         
         try:
-            # Step 1: Understand query
-            state = await self._understand_query(state)
-            if state.get("error"):
-                return self._format_response(state)
             
-            # Step 2: Generate SQL
-            state = await self._generate_sql(state)
-            if state.get("error"):
-                return self._format_response(state)
+            if readySQL=="" and readySQL=="":
+                # Step 1: Understand query
+                state = await self._understand_query(state)
+                logging.info(state)
+                if state.get("error"):
+                    return self._format_response(state)
+            
+                # Step 2: Generate SQL
+                state = await self._generate_sql(state)
+                logging.info(state)
+                if state.get("error"):
+                    return self._format_response(state)
+            else:
+                state["sql_query"]=readySQL
+                state["user_query"]=readySQLQuery
             
             # Step 3: Validate SQL
             state = self._validate_sql(state)
+            logging.info(state)
             if state.get("error"):
                 return self._format_response(state)
             
             # Step 4: Execute query
             state = await self._execute_query(state)
+            logging.info(state)
             if state.get("error"):
                 return self._format_response(state)
             
             # Step 5: Analyze results
             state = self._analyze_results(state)
+            logging.info(state)
             
             # Step 6: Generate response
             state = await self._generate_response(state)
+            logging.info(state)
             
         except Exception as e:
             logging.error(f"Error processing query: {e}")
