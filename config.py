@@ -6,11 +6,11 @@ load_dotenv()
 
 class Config:
     # SSH Configuration
-    SSH_HOST = os.getenv('SSH_HOST', 'your-ssh-server.com')
-    SSH_PORT = int(os.getenv('SSH_PORT', '22'))
-    SSH_USERNAME = os.getenv('SSH_USERNAME', 'your-username')
-    SSH_PASSWORD = os.getenv('SSH_PASSWORD', 'your-password')
-    SSH_PRIVATE_KEY_PATH = os.getenv('SSH_PRIVATE_KEY_PATH', None)
+    # SSH_HOST = os.getenv('SSH_HOST', 'your-ssh-server.com')
+    # SSH_PORT = int(os.getenv('SSH_PORT', '22'))
+    # SSH_USERNAME = os.getenv('SSH_USERNAME', 'your-username')
+    # SSH_PASSWORD = os.getenv('SSH_PASSWORD', 'your-password')
+    # SSH_PRIVATE_KEY_PATH = os.getenv('SSH_PRIVATE_KEY_PATH', None)
     
     # Database Configuration
     DB_HOST = os.getenv('DB_HOST', 'localhost')

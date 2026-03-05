@@ -24,27 +24,27 @@ class DatabaseConnection:
     """Manage SSH tunnel and database connection"""
     
     def __init__(self):
-        self.tunnel = None
+        #self.tunnel = None
         self.local_port = None
         self.engine = None
         
     def connect(self):
-        """Establish SSH tunnel and database connection"""
+        """Establish database connection"""
         try:
-            # Setup SSH tunnel
-            self.tunnel = sshtunnel.SSHTunnelForwarder(
-                (Config.SSH_HOST, Config.SSH_PORT),
-                ssh_username=Config.SSH_USERNAME,
-                ssh_password=Config.SSH_PASSWORD,
-                ssh_pkey=Config.SSH_PRIVATE_KEY_PATH,
-                remote_bind_address=(Config.DB_HOST, Config.DB_PORT),
-                local_bind_address=('localhost', 0)
-            )
-            self.tunnel.start()
-            self.local_port = self.tunnel.local_bind_port
+            # # Setup SSH tunnel
+            # self.tunnel = sshtunnel.SSHTunnelForwarder(
+            #     (Config.SSH_HOST, Config.SSH_PORT),
+            #     ssh_username=Config.SSH_USERNAME,
+            #     ssh_password=Config.SSH_PASSWORD,
+            #     ssh_pkey=Config.SSH_PRIVATE_KEY_PATH,
+            #     remote_bind_address=(Config.DB_HOST, Config.DB_PORT),
+            #     local_bind_address=('localhost', 0)
+            # )
+            # self.tunnel.start()
+            # self.local_port = self.tunnel.local_bind_port
             
             # Create SQLAlchemy engine
-            connection_string = f"mysql+pymysql://{Config.DB_USER}@localhost:{self.local_port}/{Config.DB_NAME}"            
+            connection_string = f"mysql+pymysql://{Config.DB_USER}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}"            
             self.engine = create_engine(
                 connection_string,
                 poolclass=NullPool,
