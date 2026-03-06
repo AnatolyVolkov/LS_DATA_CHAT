@@ -232,10 +232,7 @@ SCHEMA_INFO = {
                 "is_fixed": "tinyint - фиксированная привязка",
                 "reason_text": "varchar(4000) - причина",
                 "status": "tinyint - статус (0 - активна, -1 - отвязана)",
-                "its_contract_id": "bigint - внешний ключ ИТС",
-                "last_online_licencing_ip": "varchar(250) - IP последнего онлайн-обновления",
-                "last_online_licencing_hostname": "varchar(100) - hostname последнего онлайн-обновления",
-                "last_online_licencing_date": "datetime - дата последнего онлайн-обновления"
+                "its_contract_id": "bigint - внешний ключ ИТС"                
             }
         },
         "key_assignment_feature": {
