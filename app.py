@@ -1,9 +1,10 @@
 # app.py
+from database.reports import ReportManager
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from datetime import datetime
+from datetime import date, datetime
 import logging
 import asyncio
 from contextlib import contextmanager
@@ -24,6 +25,8 @@ logging.basicConfig(
 # Initialize session state
 if 'agent' not in st.session_state:
     st.session_state.agent = SQLAgent()
+if 'reports' not in st.session_state:
+    st.session_state.reports = ReportManager(st.session_state.agent)
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 if 'connected' not in st.session_state:
@@ -44,8 +47,18 @@ def execute_report_query(query_name, query_params):
     with st.chat_message("user"):
             st.markdown(f"""Отчет: {query_name}""")
 
+
+# report_queries = {
+#             "Ключи клиента на дату": 
+#                 {
+#                     "query":"SELECT COUNT(*) as total_keys FROM lic_key WHERE dt_archive IS NULL",
+#                     "params":{"TargetDate":"date", "ContractID":"string"}
+#                 }
+#         }
+    st.markdown(f"""query_params: {query_params}""")
+
+
     
-    st.session_state.messages.append({"role": "user", "content": f"""Отчет: {query_name}"""})
     
 
 def execute_quick_query(query_name, query_text):
@@ -232,12 +245,12 @@ def main():
     """, unsafe_allow_html=True)
     
     # Header
-    st.markdown("""
-    <div class="main-header">
-        <h1>🔐 Сервер лицензий - Аналитический чат-бот</h1>
-        <p>Задавайте вопросы о лицензиях, ключах, клиентах и получайте аналитику в реальном времени</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # st.markdown("""
+    # <div class="main-header">
+    #     <h1>🔐 Сервер лицензий - Аналитический чат-бот</h1>
+    #     <p>Задавайте вопросы о лицензиях, ключах, клиентах и получайте аналитику в реальном времени</p>
+    # </div>
+    # """, unsafe_allow_html=True)
     
     # Sidebar
     with st.sidebar:
@@ -259,56 +272,37 @@ def main():
         st.divider()
 
         
-        st.header("📊 Быстрые запросы")
-        quick_queries = {
-            "Всего ключей": "SELECT COUNT(*) as total_keys FROM lic_key WHERE dt_archive IS NULL",            
-            "Топ-10 клиентов": """
-                SELECT c.name, COUNT(ka.id) as key_count
-                FROM client c
-                JOIN lic_key k ON c.id = k.client_id
-                JOIN key_assignment ka ON k.id = ka.key_id
-                WHERE c.dt_archive IS NULL AND ka.status = 0
-                GROUP BY c.id, c.name
-                ORDER BY key_count DESC
-                LIMIT 10
-            """,
-            "Ключи по типам": """
-                SELECT key_type, COUNT(*) as count 
-                FROM lic_key 
-                WHERE dt_archive IS NULL 
-                GROUP BY key_type
-            """
-        }
+        # st.header("📊 Быстрые запросы")
+        # quick_queries = {
+        #     "Всего ключей": "SELECT COUNT(*) as total_keys FROM lic_key WHERE dt_archive IS NULL",            
+        #     "Топ-10 клиентов": """
+        #         SELECT c.name, COUNT(ka.id) as key_count
+        #         FROM client c
+        #         JOIN lic_key k ON c.id = k.client_id
+        #         JOIN key_assignment ka ON k.id = ka.key_id
+        #         WHERE c.dt_archive IS NULL AND ka.status = 0
+        #         GROUP BY c.id, c.name
+        #         ORDER BY key_count DESC
+        #         LIMIT 10
+        #     """,
+        #     "Ключи по типам": """
+        #         SELECT key_type, COUNT(*) as count 
+        #         FROM lic_key 
+        #         WHERE dt_archive IS NULL 
+        #         GROUP BY key_type
+        #     """
+        # }
         
-        for query_name, query in quick_queries.items():
-        #     if st.button(query_name, use_container_width=True):
-        #         st.session_state.user_input = query_name
-        #         st.session_state.run_quick_query = True
-            if st.button(query_name, key=f"quick_{query_name}", use_container_width=True):
-                if st.session_state.connected:
-                    st.session_state.quick_query_clicked = (query_name, query)
-                    st.rerun()
-                else:
-                    st.error("❌ Сначала подключитесь к БД")
-
-        st.divider()
-
-        st.header("📊 Отчеты")
-        report_queries = {
-            "Ключи клиента на дату": 
-                {
-                    "query":"SELECT COUNT(*) as total_keys FROM lic_key WHERE dt_archive IS NULL",
-                    "params":{"TargetDate":"date", "ContractID":"string"}
-                }
-        }
-
-        for query_name, query in report_queries.items():
-            if st.button(query_name, key=f"report_{query_name}", use_container_width=True):
-                if st.session_state.connected:
-                    st.session_state.report_query_clicked = (query_name, query)
-                    st.rerun()
-                else:
-                    st.error("❌ Сначала подключитесь к БД")
+        # for query_name, query in quick_queries.items():
+        # #     if st.button(query_name, use_container_width=True):
+        # #         st.session_state.user_input = query_name
+        # #         st.session_state.run_quick_query = True
+        #     if st.button(query_name, key=f"quick_{query_name}", use_container_width=True):
+        #         if st.session_state.connected:
+        #             st.session_state.quick_query_clicked = (query_name, query)
+        #             st.rerun()
+        #         else:
+        #             st.error("❌ Сначала подключитесь к БД")
 
         st.divider()
         
@@ -318,95 +312,188 @@ def main():
                 st.session_state.history_query_clicked = q
                 st.rerun()
     
-    # Main chat area
-    chat_container = st.container()
+    chat_tab, report_tab = st.tabs(["Чат-бот", "Отчеты"])
+    with chat_tab:
+        # Main chat area
+        chat_container = st.container()
+        with chat_container:
+
+            # Display chat history
+            for message in st.session_state.messages:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
+                    
+                    # Show SQL if available
+                    if "sql" in message and message["sql"]:
+                        with st.expander("Показать SQL запрос"):
+                            st.code(message["sql"], language="sql")
+                    
+                    # Show data if available
+                    if "data" in message and message["data"]:
+                        display_results(
+                            message["data"], 
+                            message.get("analysis"), 
+                            message.get("visualization")
+                        )
+                    
+            # Обработка быстрых запросов
+            if st.session_state.quick_query_clicked:
+                query_name, query_text = st.session_state.quick_query_clicked
+                execute_quick_query(query_name, query_text)
+                st.session_state.quick_query_clicked = None
+
+            # Обработка отчетов
+            if st.session_state.report_query_clicked:
+                query_name, query_params = st.session_state.report_query_clicked
+                execute_report_query(query_name, query_params)
+                st.session_state.report_query_clicked = None
+
+            # Обработка истории запросов
+            if st.session_state.history_query_clicked:
+                query_text = st.session_state.history_query_clicked
+                process_user_query(query_text)
+                st.session_state.history_query_clicked = None
+                
+
+        # Chat input
+        if prompt := st.chat_input("Задайте вопрос о лицензиях..."):
+            if not st.session_state.connected:
+                st.error("❌ Сначала подключитесь к базе данных")
+                st.stop()
+            
+            # Add user message
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            
+            with st.chat_message("user"):
+                st.markdown(prompt)
+            
+            # Process query
+            with st.chat_message("assistant"):
+                with st.spinner("🔍 Анализирую запрос..."):
+                    # Run agent
+                    result = asyncio.run(st.session_state.agent.process_query(user_query=prompt))
+                    
+                    # Display response
+                    st.markdown(result['response'])
+                    
+                    # Show SQL
+                    if result.get('sql'):
+                        with st.expander("Показать SQL запрос"):
+                            st.code(result['sql'], language="sql")
+                    
+                    # Display results
+                    if result.get('data'):
+                        display_results(
+                            result['data'],
+                            result.get('analysis'),
+                            result.get('visualization')
+                        )
+                    
+                    # Save to history
+                    st.session_state.query_history.append(prompt)
+                    
+                    # Save message
+                    message = {
+                        "role": "assistant", 
+                        "content": result['response'],
+                        "sql": result.get('sql'),
+                        "data": result.get('data'),
+                        "analysis": result.get('analysis'),
+                        "visualization": result.get('visualization')
+                    }
+                    st.session_state.messages.append(message)
+                    
+    with report_tab:
+
+        reports=st.session_state.reports.getReportList()
+        tabs = st.tabs(reports)
+
+        for i, tab in enumerate(tabs):
+            with tab:
+              # Получаем название отчета (без иконки для поиска)
+                full_name = reports[i]
+                
+                # Отображаем форму для этого отчета
+                report_config = st.session_state.reports.getReportConfig(full_name)
+                
+                if report_config:
+                    # Создаем контейнер для формы
+                    with st.container():
+                        form_data = st.session_state.reports.render_form(report_config)
+                    
+                    # Кнопка генерации отчета
+                    col1, col2 = st.columns([1, 5])
+                    with col1:
+                        generate_clicked = st.button(
+                            "🚀 Сформировать отчет",
+                            key=f"generate_{report_config.name}",
+                            type="primary",
+                            use_container_width=True
+                        )
+                    
+                    # Контейнер для результатов
+                    results_container = st.container()
+                    
+                    # Генерация отчета при нажатии кнопки
+                    if generate_clicked:
+                        with st.spinner("Формирование отчета..."):
+                            # Проверяем обязательные поля
+                            missing_fields = []
+                            for field in report_config.form_fields:
+                                if field.required and not form_data.get(field.name):
+                                    missing_fields.append(field.label)
+                            
+                            if missing_fields:
+                                st.error(f"Заполните обязательные поля: {', '.join(missing_fields)}")
+                            else:
+                                # Генерируем отчет
+                                df = st.session_state.reports.generate_report(full_name, form_data)
+                                
+                                # Сохраняем в session_state для отображения
+                                st.session_state[f"report_data_{report_config.name}"] = df
+                                st.session_state[f"report_params_{report_config.name}"] = form_data
+                                st.rerun()
+                    
+                    # Отображаем результаты, если они есть
+                    if f"report_data_{report_config.name}" in st.session_state:
+                        with results_container:
+                            df = st.session_state[f"report_data_{report_config.name}"]
+                            params = st.session_state.get(f"report_params_{report_config.name}", {})
+                            
+                            if not df.empty:
+                                st.subheader("📋 Результаты")
+                                
+                                # Показываем параметры запроса
+                                with st.expander("Параметры отчета"):
+                                    for key, value in params.items():
+                                        st.write(f"**{key}:** {value}")
+                                
+                                # Отображаем данные
+                                st.dataframe(df, use_container_width=True)
+                                
+                                # Кнопки экспорта
+                                col1, col2, col3 = st.columns(3)
+                                
+                                # CSV
+                                csv = df.to_csv(index=False).encode('utf-8')
+                                col1.download_button(
+                                    label="📥 CSV",
+                                    data=csv,
+                                    file_name=f"{report_config.name}_{date.today()}.csv",
+                                    mime="text/csv",
+                                    key=f"csv_{report_config.name}_{i}"
+                                )                                                                                               
+                                
+                            else:
+                                st.warning("Нет данных для отображения")
+                
+
+                
+        
+        
     
-    with chat_container:
-
-        # Display chat history
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-                
-                # Show SQL if available
-                if "sql" in message and message["sql"]:
-                    with st.expander("Показать SQL запрос"):
-                        st.code(message["sql"], language="sql")
-                
-                # Show data if available
-                if "data" in message and message["data"]:
-                    display_results(
-                        message["data"], 
-                        message.get("analysis"), 
-                        message.get("visualization")
-                    )
-                
-        # Обработка быстрых запросов
-        if st.session_state.quick_query_clicked:
-            query_name, query_text = st.session_state.quick_query_clicked
-            execute_quick_query(query_name, query_text)
-            st.session_state.quick_query_clicked = None
-
-         # Обработка отчетов
-        if st.session_state.report_query_clicked:
-            query_name, query_params = st.session_state.report_query_clicked
-            execute_report_query(query_name, query_params)
-            st.session_state.report_query_clicked = None
-
-        # Обработка истории запросов
-        if st.session_state.history_query_clicked:
-            query_text = st.session_state.history_query_clicked
-            process_user_query(query_text)
-            st.session_state.history_query_clicked = None
-               
-
-    # Chat input
-    if prompt := st.chat_input("Задайте вопрос о лицензиях..."):
-        if not st.session_state.connected:
-            st.error("❌ Сначала подключитесь к базе данных")
-            st.stop()
-        
-        # Add user message
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        
-        # Process query
-        with st.chat_message("assistant"):
-            with st.spinner("🔍 Анализирую запрос..."):
-                # Run agent
-                result = asyncio.run(st.session_state.agent.process_query(user_query=prompt))
-                
-                # Display response
-                st.markdown(result['response'])
-                
-                # Show SQL
-                if result.get('sql'):
-                    with st.expander("Показать SQL запрос"):
-                        st.code(result['sql'], language="sql")
-                
-                # Display results
-                if result.get('data'):
-                    display_results(
-                        result['data'],
-                        result.get('analysis'),
-                        result.get('visualization')
-                    )
-                
-                # Save to history
-                st.session_state.query_history.append(prompt)
-                
-                # Save message
-                message = {
-                    "role": "assistant", 
-                    "content": result['response'],
-                    "sql": result.get('sql'),
-                    "data": result.get('data'),
-                    "analysis": result.get('analysis'),
-                    "visualization": result.get('visualization')
-                }
-                st.session_state.messages.append(message)
+    
+   
 
 if __name__ == "__main__":
     main()

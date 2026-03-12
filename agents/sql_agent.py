@@ -93,6 +93,40 @@ class SQLAgent:
         
         return self._format_response(state)
     
+
+    async def process_report_query(self, reportSQL:str) -> Dict:
+        """Process user query through the agent workflow"""
+        state = {
+            "messages": "",
+            "user_query": "",
+            "sql_query": reportSQL,
+            "query_result": None,
+            "error": None,
+            "analysis": None,
+            "visualization_data": None,
+            "context": {}
+        }
+        
+        try:
+            
+            # Step 3: Validate SQL
+            state = self._validate_sql(state)
+            logging.info(state)
+            if state.get("error"):
+                return self._format_response(state)
+            
+            # Step 4: Execute query
+            state = await self._execute_query(state)
+            logging.info(state)
+            if state.get("error"):
+                return self._format_response(state)            
+            
+        except Exception as e:
+            logging.error(f"Error processing query: {e}")
+            state["error"] = str(e)
+        
+        return self._format_response(state)
+    
     async def _understand_query(self, state: AgentState) -> AgentState:
         """Understand the user's query and extract intent"""
         prompt = f"""
