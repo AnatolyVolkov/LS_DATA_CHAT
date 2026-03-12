@@ -1,0 +1,10 @@
+# Скачать новую версию кода (если используете git)
+git pull
+
+# Пересобрать и перезапустить
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+
+# Проверить логи
+docker-compose logs -f

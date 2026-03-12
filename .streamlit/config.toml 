@@ -1,0 +1,34 @@
+# .streamlit/config.toml
+[server]
+# Не открывать браузер автоматически
+headless = true
+# Порт
+port = 8501
+# Слушать все интерфейсы
+address = "0.0.0.0"
+# Включить CORS (для безопасности)
+enableCORS = true
+# Включить защиту от XSRF
+enableXsrfProtection = true
+# Максимальный размер сообщения
+maxUploadSize = 200
+
+[browser]
+# Не собирать статистику использования
+gatherUsageStats = false
+
+[theme]
+# Опционально: настройка темы
+primaryColor = "#6c63ff"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#262730"
+font = "sans serif"
+
+[logger]
+# Уровень логирования
+level = "error"
+
+[client]
+# Показывать ошибки только в консоли, не пользователю
+showErrorDetails = false
