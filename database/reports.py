@@ -106,6 +106,18 @@ class ReportManager:
             generate_func=self._generate_keys_report
         ))
 
+        # Отчет по ключам
+        self.register_report(ReportConfig(
+            name="get_auto_issued_keys",
+            title="Автоматически выданные ключи",
+            description="Ключи, выданные Сервером лицензий в автоматическом режиме",
+            icon="🔑",
+            category="Ключи",
+            form_fields=[],
+            generate_func=self._generate_auto_keys_report
+        ))
+
+
     def register_report(self, config: ReportConfig):
         """Регистрация нового отчета"""
         self.reports[config.name] = config
@@ -348,6 +360,34 @@ class ReportManager:
         
     ORDER BY 
         p.name, c.name, cc.name, con.name, ka.dt_assign;
+    """
+        result = asyncio.run(self.agent.process_report_query(sql))
+        
+        return pd.DataFrame(result["data"])
+    
+     
+    def _generate_auto_keys_report(self, params: Dict) -> pd.DataFrame:
+        """Генерация отчета по автоматически выданным ключам"""
+        
+        logging.info(f"""Генерация отчета по автоматически выданным ключам""")        
+
+        sql=f"""
+            SELECT 
+                p.name AS "Партнер",
+                c.name AS "Клиент",
+                cc.name AS "Контрагент",
+                li.serial_num AS "Серийный номер",	 
+                CONCAT(app.name," ",li.app_version) AS "Продукт",
+                li.dt_assign AS "Дата выдачи",
+                li.expiration_date AS "Дата окончания лицензии",
+                li.build_date AS "Дата доступного релиза",
+                CASE WHEN li.expiration_date<NOW() THEN "Просрочена" ELSE "Действующая" END AS "Статус"	
+            FROM licencecenter.licence_info li
+            INNER JOIN licencecenter.client_contragent cc  ON cc.uuid=li.contragentid 
+            INNER JOIN licencecenter.client c ON c.id=cc.client_id 
+            INNER JOIN licencecenter.partner p ON p.id=c.partner_id  
+            INNER JOIN licencecenter.app ON app.app_type =li.app_type 
+            ORDER BY p.name, c.name, cc.name;
     """
         result = asyncio.run(self.agent.process_report_query(sql))
         

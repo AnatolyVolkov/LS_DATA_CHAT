@@ -487,13 +487,5 @@ def main():
                             else:
                                 st.warning("Нет данных для отображения")
                 
-
-                
-        
-        
-    
-    
-   
-
 if __name__ == "__main__":
     main()
