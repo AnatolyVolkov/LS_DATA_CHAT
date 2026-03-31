@@ -377,7 +377,7 @@ class ReportManager:
                 c.name AS "Клиент",
                 cc.name AS "Контрагент",
                 li.serial_num AS "Серийный номер",	 
-                CONCAT(app.name," ",li.app_version) AS "Продукт",
+                CONCAT(li.app_type ," ",li.app_version) AS "Продукт",
                 li.dt_assign AS "Дата выдачи",
                 li.expiration_date AS "Дата окончания лицензии",
                 li.build_date AS "Дата доступного релиза",
@@ -385,8 +385,7 @@ class ReportManager:
             FROM licencecenter.licence_info li
             INNER JOIN licencecenter.client_contragent cc  ON cc.uuid=li.contragentid 
             INNER JOIN licencecenter.client c ON c.id=cc.client_id 
-            INNER JOIN licencecenter.partner p ON p.id=c.partner_id  
-            INNER JOIN licencecenter.app ON app.app_type =li.app_type 
+            INNER JOIN licencecenter.partner p ON p.id=c.partner_id   
             ORDER BY p.name, c.name, cc.name;
     """
         result = asyncio.run(self.agent.process_report_query(sql))
