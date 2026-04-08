@@ -182,7 +182,9 @@ class SQLAgent:
         - Используй JOIN client_contract с client_contragent
         - Используй JOIN client_contragent с client
         - Используй JOIN client с partner
+        - Используй JOIN lic_key с key_assignment
         - Недопустимо использовать JOIN client_document_application с key_assignment, вместо него используй подзапросы
+        - Если не сказано иное - сравнивай переданное значение ключа с полем sernum, а не id таблицы lic_key
         
         Ответь ТОЛЬКО SQL запросом, без пояснений.
         """
