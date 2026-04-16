@@ -353,7 +353,7 @@ class ReportManager:
 
     WHERE con.dt_archive IS NULL AND con.id={contract_id}    
         AND (
-                ((ka.dt_assign <= "{report_date}" AND ka.status = 0) OR (ka.status = -1 AND ka.dt_status > "{report_date}"))
+                (ka.dt_assign <= "{report_date}" AND ka.status = 0)
                 OR  
                 (ka.status = -1 AND ka.dt_status BETWEEN DATE_SUB("{report_date}", INTERVAL 1 MONTH) AND "{report_date}")
             )

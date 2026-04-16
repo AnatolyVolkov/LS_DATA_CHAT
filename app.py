@@ -42,8 +42,7 @@ if 'history_query_clicked' not in st.session_state:
 
 def execute_report_query(query_name, query_params):
     if not st.session_state.connected:
-        st.error("❌ Сначала подключитесь к базе данных")
-        st.stop()
+        init_connection()
     with st.chat_message("user"):
             st.markdown(f"""Отчет: {query_name}""")
 
@@ -65,8 +64,7 @@ def execute_quick_query(query_name, query_text):
     """Execute a quick query and display results"""
 
     if not st.session_state.connected:
-        st.error("❌ Сначала подключитесь к базе данных")
-        st.stop()
+        init_connection()
     with st.chat_message("user"):
             st.markdown(f"""Быстрый запрос: {query_name}""")
 
@@ -257,17 +255,17 @@ def main():
         
         st.header("🔌 Подключение")
         
-        if not st.session_state.connected:
-            if st.button("🔄 Подключиться к БД", type="primary", use_container_width=True):
-                init_connection()
-                if st.session_state.connected:
-                    st.rerun()
-        else:
-            st.success("✅ Подключено к БД")
-            if st.button("❌ Отключиться", use_container_width=True):
-                db_connection.disconnect()
-                st.session_state.connected = False
-                st.rerun()
+        # if not st.session_state.connected:
+        #     if st.button("🔄 Подключиться к БД", type="primary", use_container_width=True):
+        #         init_connection()
+        #         if st.session_state.connected:
+        #             st.rerun()
+        # else:
+        #     st.success("✅ Подключено к БД")
+        #     if st.button("❌ Отключиться", use_container_width=True):
+        #         db_connection.disconnect()
+        #         st.session_state.connected = False
+        #         st.rerun()
         
         st.divider()
 
@@ -358,8 +356,7 @@ def main():
         # Chat input
         if prompt := st.chat_input("Задайте вопрос о лицензиях..."):
             if not st.session_state.connected:
-                st.error("❌ Сначала подключитесь к базе данных")
-                st.stop()
+                init_connection()
             
             # Add user message
             st.session_state.messages.append({"role": "user", "content": prompt})
