@@ -251,64 +251,64 @@ def main():
     # """, unsafe_allow_html=True)
     
     # Sidebar
-    with st.sidebar:
+    # with st.sidebar:
         
-        st.header("🔌 Подключение")
+    #     #st.header("🔌 Подключение")
         
-        # if not st.session_state.connected:
-        #     if st.button("🔄 Подключиться к БД", type="primary", use_container_width=True):
-        #         init_connection()
-        #         if st.session_state.connected:
-        #             st.rerun()
-        # else:
-        #     st.success("✅ Подключено к БД")
-        #     if st.button("❌ Отключиться", use_container_width=True):
-        #         db_connection.disconnect()
-        #         st.session_state.connected = False
-        #         st.rerun()
+    #     # if not st.session_state.connected:
+    #     #     if st.button("🔄 Подключиться к БД", type="primary", use_container_width=True):
+    #     #         init_connection()
+    #     #         if st.session_state.connected:
+    #     #             st.rerun()
+    #     # else:
+    #     #     st.success("✅ Подключено к БД")
+    #     #     if st.button("❌ Отключиться", use_container_width=True):
+    #     #         db_connection.disconnect()
+    #     #         st.session_state.connected = False
+    #     #         st.rerun()
         
-        st.divider()
+    #     #st.divider()
 
         
-        # st.header("📊 Быстрые запросы")
-        # quick_queries = {
-        #     "Всего ключей": "SELECT COUNT(*) as total_keys FROM lic_key WHERE dt_archive IS NULL",            
-        #     "Топ-10 клиентов": """
-        #         SELECT c.name, COUNT(ka.id) as key_count
-        #         FROM client c
-        #         JOIN lic_key k ON c.id = k.client_id
-        #         JOIN key_assignment ka ON k.id = ka.key_id
-        #         WHERE c.dt_archive IS NULL AND ka.status = 0
-        #         GROUP BY c.id, c.name
-        #         ORDER BY key_count DESC
-        #         LIMIT 10
-        #     """,
-        #     "Ключи по типам": """
-        #         SELECT key_type, COUNT(*) as count 
-        #         FROM lic_key 
-        #         WHERE dt_archive IS NULL 
-        #         GROUP BY key_type
-        #     """
-        # }
+    #     # st.header("📊 Быстрые запросы")
+    #     # quick_queries = {
+    #     #     "Всего ключей": "SELECT COUNT(*) as total_keys FROM lic_key WHERE dt_archive IS NULL",            
+    #     #     "Топ-10 клиентов": """
+    #     #         SELECT c.name, COUNT(ka.id) as key_count
+    #     #         FROM client c
+    #     #         JOIN lic_key k ON c.id = k.client_id
+    #     #         JOIN key_assignment ka ON k.id = ka.key_id
+    #     #         WHERE c.dt_archive IS NULL AND ka.status = 0
+    #     #         GROUP BY c.id, c.name
+    #     #         ORDER BY key_count DESC
+    #     #         LIMIT 10
+    #     #     """,
+    #     #     "Ключи по типам": """
+    #     #         SELECT key_type, COUNT(*) as count 
+    #     #         FROM lic_key 
+    #     #         WHERE dt_archive IS NULL 
+    #     #         GROUP BY key_type
+    #     #     """
+    #     # }
         
-        # for query_name, query in quick_queries.items():
-        # #     if st.button(query_name, use_container_width=True):
-        # #         st.session_state.user_input = query_name
-        # #         st.session_state.run_quick_query = True
-        #     if st.button(query_name, key=f"quick_{query_name}", use_container_width=True):
-        #         if st.session_state.connected:
-        #             st.session_state.quick_query_clicked = (query_name, query)
-        #             st.rerun()
-        #         else:
-        #             st.error("❌ Сначала подключитесь к БД")
+    #     # for query_name, query in quick_queries.items():
+    #     # #     if st.button(query_name, use_container_width=True):
+    #     # #         st.session_state.user_input = query_name
+    #     # #         st.session_state.run_quick_query = True
+    #     #     if st.button(query_name, key=f"quick_{query_name}", use_container_width=True):
+    #     #         if st.session_state.connected:
+    #     #             st.session_state.quick_query_clicked = (query_name, query)
+    #     #             st.rerun()
+    #     #         else:
+    #     #             st.error("❌ Сначала подключитесь к БД")
 
-        st.divider()
+    #     st.divider()
         
-        st.header("📁 История запросов")
-        for i, q in enumerate(st.session_state.query_history[-5:]):
-            if st.button(f"🔄 {q[:30]}...", key=f"hist_{i}", use_container_width=True):
-                st.session_state.history_query_clicked = q
-                st.rerun()
+    #     st.header("📁 История запросов")
+    #     for i, q in enumerate(st.session_state.query_history[-5:]):
+    #         if st.button(f"🔄 {q[:30]}...", key=f"hist_{i}", use_container_width=True):
+    #             st.session_state.history_query_clicked = q
+    #             st.rerun()
     
     chat_tab, report_tab = st.tabs(["Чат-бот", "Отчеты"])
     with chat_tab:
